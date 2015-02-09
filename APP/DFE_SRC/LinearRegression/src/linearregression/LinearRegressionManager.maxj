@@ -1,0 +1,69 @@
+package linearregression;
+
+import com.maxeler.maxcompiler.v2.managers.BuildConfig;
+import com.maxeler.maxcompiler.v2.managers.custom.CustomManager;
+import com.maxeler.maxcompiler.v2.managers.custom.blocks.KernelBlock;
+import com.maxeler.maxcompiler.v2.managers.engine_interfaces.CPUTypes;
+import com.maxeler.maxcompiler.v2.managers.engine_interfaces.EngineInterface;
+import com.maxeler.maxcompiler.v2.managers.engine_interfaces.EngineInterface.Direction;
+import com.maxeler.maxcompiler.v2.managers.engine_interfaces.InterfaceParam;
+
+
+
+public class LinearRegressionManager extends CustomManager {
+
+	private static final String s_kernelName = "LinearRegressionKernel";
+
+	public LinearRegressionManager(LinearRegressionEngineParameters engineParameters) {
+		super(engineParameters);
+
+		KernelBlock block = addKernel(new LinearRegressionKernel(makeKernelParameters(s_kernelName)));
+
+		block.getInput("x") <== addStreamFromCPU("x");
+		block.getInput("y") <== addStreamFromCPU("y");
+		addStreamToCPU("a") <== block.getOutput("a");
+		addStreamToCPU("b") <== block.getOutput("b");
+		createSLiCinterface(modeDefault());
+
+		configBuild(engineParameters);
+	}
+
+	private static EngineInterface modeDefault() {
+		EngineInterface engine_interface = new EngineInterface();
+		CPUTypes   type = CPUTypes.FLOAT;
+		int        size = type.sizeInBytes();
+
+		InterfaceParam  dataPoints  = engine_interface.addParam("dataPoints", CPUTypes.INT);
+		InterfaceParam 	loopLength	=	engine_interface.getAutoLoopOffset("LinearRegressionKernel", "loopLength");
+		engine_interface.ignoreAutoLoopOffset("LinearRegressionKernel", "loopLength");
+
+		engine_interface.setTicks(s_kernelName, dataPoints * loopLength);
+
+		engine_interface.setScalar(s_kernelName, "dataPoints", dataPoints);
+
+		engine_interface.setStream("x", type, dataPoints * size);
+		engine_interface.setStream("y", type, dataPoints * size);
+		engine_interface.setStream("a", type, dataPoints * size);
+		engine_interface.setStream("b", type, dataPoints * size);
+		engine_interface.ignoreAll(Direction.IN_OUT);
+		return engine_interface;
+	}
+
+	private void configBuild(LinearRegressionEngineParameters params) {
+		BuildConfig buildConfig = getBuildConfig();
+		buildConfig.setMPPRParallelism(params.getMPPRThreads());
+		buildConfig.setMPPRRetryNearMissesThreshold(params.getMPPRRetryThreshold());
+
+		buildConfig.setMPPRCostTableSearchRange(1, 4);
+		buildConfig.setBuildEffort(BuildConfig.Effort.HIGH);
+
+	}
+
+
+	public static void main(String[] args) {
+		LinearRegressionEngineParameters params = new LinearRegressionEngineParameters(args);
+		LinearRegressionManager manager = new LinearRegressionManager(params);
+
+		manager.build();
+	}
+}
