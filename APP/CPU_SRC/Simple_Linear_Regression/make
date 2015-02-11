@@ -25,7 +25,7 @@ cflags = '-std=gnu99 -finstrument-functions -fopenmp -fPIC -W -Wall'
 ldflags = '-fopenmp'
 
 # Macros for compiling
-MACROS = '-Dparam_numTimesteps=param_numSteps -Dparam_numTimeseries=param_numVariables -Dinstream_in_data_pairs=instream_in_variable_pair -Dcorrelation_maxNumTimeseries=correlation_maxNumVariables'
+MACROS = ''
 
 
 
