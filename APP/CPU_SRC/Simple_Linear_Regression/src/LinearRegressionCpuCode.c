@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "LinearRegressionSAPI"
+#include "LinearRegressionSAPI.h"
 
 
 void data_gen(float * data_x, float * data_y, int numValues);
