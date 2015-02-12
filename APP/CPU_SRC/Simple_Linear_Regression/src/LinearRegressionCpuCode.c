@@ -2,8 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "Maxfiles.h"
-#include "MaxSLiCInterface.h"
+#include "LinearRegressionSAPI"
 
 
 void data_gen(float * data_x, float * data_y, int numValues);
