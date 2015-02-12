@@ -15,7 +15,7 @@ sources = ['LinearRegressionCpuCode']
 DFE_PRJs = ['LinearRegression']
 
 # Platform
-platform = 'SIM'
+platform = 'SIMULATION'
 
 # Include other C projects 
 C_PRJs = []
