@@ -1,0 +1,19 @@
+#########################################################
+#                  RunRule Settings                     #
+#########################################################
+
+
+boardModel:
+ SIMULATION 
+
+enableMPCX:
+ false 
+
+maxfileName:
+ linearregression
+
+mainClass:
+ linearregression.LinearRegressionManager
+
+remoteExecution:
+ false
