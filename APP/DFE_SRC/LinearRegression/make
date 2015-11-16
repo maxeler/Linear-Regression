@@ -22,14 +22,13 @@ MAXDEBUG = 'source,lines,vars'
 MAXSOURCE = '1.6'
 MAXTARGET = '1.6'
 MAXCLASSPATH = ['%s/lib/MaxCompiler.jar' % MAXCOMPILERDIR,
-				'/network-raid/opt/maxq/maxq-ctl.jar',
 				'jcommon-1.0.17.jar',
 				'jfreechart-1.0.14.jar']
 
 MAXDESTDIR = 'bin'
 MAXSRCDIR = 'src'
 
-COMPILER = '/network-raid/opt/jdk1.6.0_02/jre/bin/java'
+COMPILER = 'java'
 X = 'mx12288m'
 CLASSPATH = MAXCLASSPATH[:-2] + ['bin']
 
