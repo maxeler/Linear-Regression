@@ -17,7 +17,7 @@ DFE_PRJs = ['LinearRegression']
 # Platform
 platform = 'SIMULATION'
 
-# Include other C projects 
+# Include other C projects
 C_PRJs = []
 
 # Flags
@@ -36,30 +36,32 @@ MACROS = ''
 import os
 from fabricate import *
 
-prj_root = os.path.dirname(os.path.dirname(os.path.dirname(os.getcwd()))) + '/' 
+prj_root = os.path.dirname(os.path.dirname(os.path.dirname(os.getcwd()))) + '/'
 setup(dirs=['.', prj_root])
 
 
 def build():
 	compile('build', cflags)
-	link('build', ldflags)	
+	link('build', ldflags)
 
 
 def compile(build_dir, flags):
 
 	# Include SLiC headers
 	flags = flags + ' ' + shell("slic-config", "--cflags").strip().replace('\'', '')
-	
+
 	# Compile .max files into .o files
 	for dfe in DFE_PRJs:
-		max_dir = os.path.join(prj_root, "PLATFORMS", platform, "Maxfiles", dfe)	
+		max_dir = os.path.join(prj_root, "PLATFORMS", platform, "Maxfiles", dfe)
 		sapi_dir = os.path.join(prj_root,"PLATFORMS",platform,"SAPI", dfe)
+		if not os.path.isdir(sapi_dir):
+			run('mkdir', '-p', sapi_dir)
 		for maxfile in os.listdir(max_dir):
-			if maxfile.endswith(".max"):	
+			if maxfile.endswith(".max"):
 				max_abs = os.path.join(max_dir, os.path.basename(maxfile))
 				slic_abs = os.path.join(sapi_dir,os.path.splitext(maxfile)[0] + ".o")
 				if os.path.isfile(max_abs):
-					run ('sliccompile',  max_abs, slic_abs)  
+					run ('sliccompile',  max_abs, slic_abs)
 
 
 	# Include all SAPI directories
@@ -67,14 +69,15 @@ def compile(build_dir, flags):
 
 	# Include C projects directories
 	inc_c = ['-I' + os.path.join(prj_root, "PLATFORMS", platform, "MAPI", c_prj) for c_prj in C_PRJs]
-	
+
 	# Create buld directory
-	run ('mkdir', build_dir)
-	
+	if not os.path.isdir(build_dir):
+		run ('mkdir', '-p', build_dir)
+
 	# Compile source code
 	for source in sources:
 		run ('gcc', '-c', os.path.join('src', source+'.c'), '-o', os.path.join(build_dir, source+'.o'), flags.split(), inc_sapi, inc_c, MACROS.split())
-		
+
 
 def link (build_dir, flags):
 
@@ -83,7 +86,7 @@ def link (build_dir, flags):
 
 	# Object files
 	objects = [os.path.join(build_dir, s+'.o') for s in sources]
-	
+
 	slic_objects = []
 	for dfe in DFE_PRJs:
 		sapi_dir = os.path.join(prj_root, "PLATFORMS", platform,"SAPI", dfe)
@@ -102,10 +105,11 @@ def link (build_dir, flags):
 
 	# Link object file and make an executable
 	run ('gcc', objects, slic_objects, mapi_libs, '-o', os.path.join(build_dir,EXEC_NAME), flags.split())
-	
+
 	# Making new directory for this project and copying executable
-	bin_dir = os.path.join(prj_root, "PLATFORMS", platform, 'binaries', os.path.basename(os.getcwd()))
-	run ('mkdir', bin_dir)
+	bin_dir = os.path.join(prj_root, "PLATFORMS", platform, 'Maxfiles', os.path.basename(os.getcwd()))
+	if not os.path.isdir(build_dir):
+		r.gitun ('mkdir', '-p', bin_dir)
 	run ('cp', os.path.join(build_dir,EXEC_NAME), bin_dir)
 
 def clean():
