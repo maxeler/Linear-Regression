@@ -42,6 +42,9 @@ else:
 MAXFILENAME = doc ['maxfileName']
 SOURCE = doc ['mainClass']
 
+PRJ_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.getcwd()))) + '/'
+MAX_DIR = os.path.join(PRJ_ROOT, 'PLATFORMS', doc['boardModel'], 'Maxfiles', 'LinearRegression')
+SAPI_DIR = os.path.join(PRJ_ROOT, 'PLATFORMS', doc['boardModel'], 'SAPI', 'LinearRegression')
 
 @contextlib.contextmanager
 def cd(newPath):
@@ -70,12 +73,18 @@ def compile():
 def maxfile():
 	run(COMPILER, '-X%s' % X, '-classpath', '%s' % ':'.join(CLASSPATH),
 		SOURCE, 'target=%s' % TARGET, 'maxFileName=%s' % MAXFILENAME, 'DFEModel=%s' % MODEL)
+	# Copy results to PLATFORMS folder
+	if not os.path.isdir(MAX_DIR):
+		run('mkdir', '-p', MAX_DIR)
+	src_dir = os.path.join('build', os.path.join('%s_%s_%s' % (MAXFILENAME, MODEL, TARGET), 'results'))
+	run('cp', os.path.join(src_dir, '%s.max' % MAXFILENAME), MAX_DIR);
+	run('cp', os.path.join(src_dir, '%s.h' % MAXFILENAME), os.path.join(SAPI_DIR, '%sSAPI.h' % MAXFILENAME))
 
 def build():
 	clean()
 	init()
 	compile()
 	maxfile()
-    
+
 main()
 
