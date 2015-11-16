@@ -32,7 +32,7 @@ COMPILER = 'java'
 X = 'mx12288m'
 CLASSPATH = MAXCLASSPATH[:-2] + ['bin']
 
-MODEL = doc ['boardModel']
+MODEL = os.environ['MAXCOMPILER_TARGET'] if 'MAXCOMPILER_TARGET' in os.environ else doc['boardModel']
 if MODEL=='SIMULATION':
 	TARGET = 'DFE_SIM'
 	MODEL = 'MAIA'

@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+import os
+from fabricate import *
 
 ###################################################################################################
 #                                 Custom configurations                                           #
@@ -15,7 +17,7 @@ sources = ['LinearRegressionCpuCode']
 DFE_PRJs = ['LinearRegression']
 
 # Platform
-platform = 'SIMULATION'
+platform = os.environ['MAXCOMPILER_TARGET'] if 'MAXCOMPILER_TARGET' in os.environ else 'SIMULATION'
 
 # Include other C projects
 C_PRJs = []
@@ -32,9 +34,6 @@ MACROS = ''
 ###################################################################################################
 #                                         Targets                                                 #
 ###################################################################################################
-
-import os
-from fabricate import *
 
 prj_root = os.path.dirname(os.path.dirname(os.path.dirname(os.getcwd()))) + '/'
 setup(dirs=['.', prj_root])
