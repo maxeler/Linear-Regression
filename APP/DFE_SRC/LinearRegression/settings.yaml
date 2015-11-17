@@ -10,7 +10,7 @@ enableMPCX:
  false 
 
 maxfileName:
- linearregression
+ LinearRegression
 
 mainClass:
  linearregression.LinearRegressionManager
